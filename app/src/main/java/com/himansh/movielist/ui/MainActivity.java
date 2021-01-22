@@ -1,4 +1,4 @@
-package com.himansh.movielist;
+package com.himansh.movielist.ui;
 
 
 import android.app.ProgressDialog;
@@ -15,6 +15,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.himansh.movielist.data.rest.AppController;
+import com.himansh.movielist.data.model.MovieObject;
+import com.himansh.movielist.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

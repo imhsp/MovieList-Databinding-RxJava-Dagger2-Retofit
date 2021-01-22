@@ -1,4 +1,4 @@
-package com.himansh.movielist;
+package com.himansh.movielist.data.rest;
 
 import android.app.Application;
 import android.text.TextUtils;

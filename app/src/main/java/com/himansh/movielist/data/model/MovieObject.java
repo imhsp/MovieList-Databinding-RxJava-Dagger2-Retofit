@@ -1,4 +1,4 @@
-package com.himansh.movielist;
+package com.himansh.movielist.data.model;
 
 public class MovieObject {
 

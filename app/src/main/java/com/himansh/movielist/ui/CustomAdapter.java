@@ -1,4 +1,4 @@
-package com.himansh.movielist;
+package com.himansh.movielist.ui;
 
 import java.util.ArrayList;
 
@@ -12,6 +12,9 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.himansh.movielist.data.rest.AppController;
+import com.himansh.movielist.data.model.MovieObject;
+import com.himansh.movielist.R;
 
 public class CustomAdapter extends BaseAdapter {
 
