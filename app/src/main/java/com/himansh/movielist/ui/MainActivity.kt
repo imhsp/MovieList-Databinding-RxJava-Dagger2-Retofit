@@ -1,157 +1,101 @@
-package com.himansh.movielist.ui;
+package com.himansh.movielist.ui
 
+import android.app.ProgressDialog
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView.OnItemClickListener
+import android.widget.ListView
+import android.widget.SearchView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import com.android.volley.Request
+import com.android.volley.VolleyError
+import com.android.volley.toolbox.JsonObjectRequest
+import com.himansh.movielist.R
+import com.himansh.movielist.data.model.MovieObject
+import com.himansh.movielist.data.rest.AppController
+import org.json.JSONArray
+import org.json.JSONException
+import java.util.*
 
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.Toast;
+class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
+    private var mSearchView: SearchView? = null
+    private var pDialog: ProgressDialog? = null
+    private val movieList = ArrayList<MovieObject>()
+    private var listView: ListView? = null
+    private var adapter: CustomAdapter? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        mSearchView = findViewById<View>(R.id.movie_search) as SearchView
+        mSearchView!!.isIconifiedByDefault = false
+        mSearchView!!.setOnQueryTextListener(this)
+        mSearchView!!.isSubmitButtonEnabled = true
+        mSearchView!!.queryHint = "Search Movie Here"
+        mSearchView!!.setQuery("Home", true)
+        listView = findViewById<View>(R.id.movie_list) as ListView
+        adapter = CustomAdapter(this, movieList)
+        listView!!.adapter = adapter
+        listView!!.onItemClickListener = OnItemClickListener { _, _, position, _ -> launchMovieInfo(movieList[position].imdb) }
+        listView!!.isTextFilterEnabled = true
+    }
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.himansh.movielist.data.rest.AppController;
-import com.himansh.movielist.data.model.MovieObject;
-import com.himansh.movielist.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
-
-
-    SearchView mSearchView;
-
-    private ProgressDialog pDialog;
-    private ArrayList<MovieObject> movieList = new ArrayList<MovieObject>();
-    private ListView listView;
-    private CustomAdapter adapter;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        mSearchView=(SearchView) findViewById(R.id.movie_search);
-        mSearchView.setIconifiedByDefault(false);
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.setSubmitButtonEnabled(true);
-        mSearchView.setQueryHint("Search Movie Here");
-        mSearchView.setQuery("Home", true);
-
-
-        listView = (ListView) findViewById(R.id.movie_list);
-        adapter = new CustomAdapter(this, movieList);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                launchMovieInfo(movieList.get(position).getImdb());
+    private fun searchMovie(query: String) {
+        pDialog = ProgressDialog(this)
+        pDialog!!.setMessage("Loading...")
+        pDialog!!.show()
+        val url = "http://www.omdbapi.com/?s=$query&apikey=94a221d"
+        movieList.clear()
+        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
+            hidePDialog()
+            val resultArray: JSONArray?
+            try {
+                resultArray = response.getJSONArray("Search")
+                for (j in 0 until resultArray.length()) {
+                    val obj = resultArray.getJSONObject(j)
+                    val movie = MovieObject(obj.getString("Title"), obj.getString("Year"), obj.getString("imdbID"), obj.getString("Type"), obj.getString("Poster"))
+                    movieList.add(movie)
+                }
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
-        });
-
-        listView.setTextFilterEnabled(true);
-
+            adapter!!.notifyDataSetChanged()
+        }) { error ->
+            showError(error)
+            hidePDialog()
+        }
+        AppController.instance.addToRequestQueue(jsonObjectRequest)
     }
 
-    private void searchMovie(String query){
-
-        pDialog = new ProgressDialog(this);
-        pDialog.setMessage("Loading...");
-        pDialog.show();
-
-        String url = "http://www.omdbapi.com/?s="+query+"&apikey=94a221d";
-
-        movieList.clear();
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-
-                        hidePDialog();
-                        JSONArray resultArray = null;
-                        try {
-                            resultArray = response.getJSONArray("Search");
-
-                            for (int j = 0; j < resultArray.length(); j++) {
-
-
-
-                                JSONObject obj = resultArray.getJSONObject(j);
-                                MovieObject movie = new MovieObject(obj.getString("Title"), obj.getString("Year"),obj.getString("imdbID"),obj.getString("Type"),obj.getString("Poster"));
-                                movieList.add(movie);
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        adapter.notifyDataSetChanged();
-
-
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        showError(error);
-                        hidePDialog();
-
-                    }
-                });
-
-        AppController.getInstance().addToRequestQueue(jsonObjectRequest);
-
+    private fun showError(error: VolleyError) {
+        Toast.makeText(this, "I'll handle this Error if you hire me!\n\n$error", Toast.LENGTH_LONG).show()
     }
 
-    private void showError(VolleyError error) {
-        Toast.makeText(this,"I'll handle this Error if you hire me!\n\n" + error.toString(),Toast.LENGTH_LONG).show();
+    override fun onQueryTextChange(newText: String): Boolean {
+        return false
     }
 
-    @Override
-    public boolean onQueryTextChange(String newText)
-    {
-        return false;
+    override fun onQueryTextSubmit(query: String): Boolean {
+        searchMovie(query)
+        return true
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query)
-    {
-
-        searchMovie(query);
-
-        return true;
+    private fun launchMovieInfo(imdb: String) {
+        val intent = Intent(this, MovieInfo::class.java)
+        intent.putExtra("imdbID", imdb)
+        startActivity(intent)
     }
 
-
-    private void launchMovieInfo(String imdb) {
-        Intent intent = new Intent(this, MovieInfo.class);
-        intent.putExtra("imdbID", imdb);
-        startActivity(intent);
+    public override fun onDestroy() {
+        super.onDestroy()
+        hidePDialog()
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        hidePDialog();
-    }
-
-    private void hidePDialog() {
+    private fun hidePDialog() {
         if (pDialog != null) {
-            pDialog.dismiss();
-            pDialog = null;
+            pDialog!!.dismiss()
+            pDialog = null
         }
     }
 }

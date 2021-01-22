@@ -1,64 +1,61 @@
-package com.himansh.movielist.data.rest;
+package com.himansh.movielist.data.rest
 
-import android.app.Application;
-import android.text.TextUtils;
+import android.app.Application
+import android.text.TextUtils
+import com.android.volley.Request
+import com.android.volley.RequestQueue
+import com.android.volley.toolbox.ImageLoader
+import com.android.volley.toolbox.Volley
+import com.himansh.movielist.util.LruBitmapCache
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
-import com.himansh.movielist.util.LruBitmapCache;
+class AppController : Application() {
 
-public class AppController extends Application {
-
-    public static final String TAG = AppController.class.getSimpleName();
-
-    private RequestQueue mRequestQueue;
-    private ImageLoader mImageLoader;
-
-    private static AppController mInstance;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        mInstance = this;
+    private var mRequestQueue: RequestQueue? = null
+    private var mImageLoader: ImageLoader? = null
+    override fun onCreate() {
+        super.onCreate()
+        instance = this
     }
 
-    public static synchronized AppController getInstance() {
-        return mInstance;
-    }
-
-    public RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+    private val requestQueue: RequestQueue?
+        get() {
+            if (mRequestQueue == null) {
+                mRequestQueue = Volley.newRequestQueue(applicationContext)
+            }
+            return mRequestQueue
+        }
+    val imageLoader: ImageLoader?
+        get() {
+            requestQueue
+            if (mImageLoader == null) {
+                mImageLoader = ImageLoader(mRequestQueue,
+                        LruBitmapCache())
+            }
+            return mImageLoader
         }
 
-        return mRequestQueue;
-    }
-
-    public ImageLoader getImageLoader() {
-        getRequestQueue();
-        if (mImageLoader == null) {
-            mImageLoader = new ImageLoader(this.mRequestQueue,
-                    new LruBitmapCache());
-        }
-        return this.mImageLoader;
-    }
-
-    public <T> void addToRequestQueue(Request<T> req, String tag) {
+    fun <T> addToRequestQueue(req: Request<T>, tag: String?) {
         // set the default tag if tag is empty
-        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-        getRequestQueue().add(req);
+        req.tag = if (TextUtils.isEmpty(tag)) TAG else tag
+        requestQueue!!.add(req)
     }
 
-    public <T> void addToRequestQueue(Request<T> req) {
-        req.setTag(TAG);
-        getRequestQueue().add(req);
+    fun <T> addToRequestQueue(req: Request<T>) {
+        req.tag = TAG
+        requestQueue!!.add(req)
     }
 
-    public void cancelPendingRequests(Object tag) {
+    fun cancelPendingRequests(tag: Any?) {
         if (mRequestQueue != null) {
-            mRequestQueue.cancelAll(tag);
+            mRequestQueue!!.cancelAll(tag)
         }
+    }
+
+    companion object {
+        val TAG: String = AppController::class.java.simpleName
+
+        @get:Synchronized
+        var instance: AppController? = null
+            private set
     }
 }

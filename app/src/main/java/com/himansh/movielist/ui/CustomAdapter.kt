@@ -1,85 +1,61 @@
-package com.himansh.movielist.ui;
+package com.himansh.movielist.ui
 
-import java.util.ArrayList;
+import android.app.Activity
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.TextView
+import com.android.volley.toolbox.ImageLoader
+import com.android.volley.toolbox.NetworkImageView
+import com.himansh.movielist.R
+import com.himansh.movielist.data.model.MovieObject
+import com.himansh.movielist.data.rest.AppController
+import java.util.*
 
-import android.app.Activity;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
-
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.himansh.movielist.data.rest.AppController;
-import com.himansh.movielist.data.model.MovieObject;
-import com.himansh.movielist.R;
-
-public class CustomAdapter extends BaseAdapter {
-
-    ArrayList<MovieObject> movieList;
-    private Activity activity;
-    private LayoutInflater inflater;
-    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
-
-    public CustomAdapter(Activity activity, ArrayList<MovieObject> items) {
-        this.activity = activity;
-        this.movieList = items;
+class CustomAdapter(private val activity: Activity, var movieList: ArrayList<MovieObject>) : BaseAdapter() {
+    private var inflater: LayoutInflater? = null
+    var imageLoader: ImageLoader? = AppController.getInstance().getImageLoader()
+    override fun getCount(): Int {
+        return movieList.size
     }
 
-    @Override
-    public int getCount() {
-        return movieList.size();
+    override fun getItem(position: Int): Any {
+        return movieList[position]
     }
 
-    @Override
-    public Object getItem(int position) {
-        return movieList.get(position);
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
     }
 
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (inflater == null)
-            inflater = (LayoutInflater) activity
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (convertView == null)
-            convertView = inflater.inflate(R.layout.custom_list_item, null);
-
-        if (imageLoader == null)
-            imageLoader = AppController.getInstance().getImageLoader();
-        NetworkImageView thumbNail = (NetworkImageView) convertView
-                .findViewById(R.id.thumbnail);
-        TextView title = (TextView) convertView.findViewById(R.id.movieName);
-        TextView type = (TextView) convertView.findViewById(R.id.movieType);
-        TextView year = (TextView) convertView.findViewById(R.id.movieYear);
+    override fun getView(position: Int, convertView: View, parent: ViewGroup): View {
+        var convertView = convertView
+        if (inflater == null) inflater = activity
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        if (convertView == null) convertView = inflater!!.inflate(R.layout.custom_list_item, null)
+        if (imageLoader == null) imageLoader = AppController.getInstance().getImageLoader()
+        val thumbNail = convertView
+                .findViewById<View>(R.id.thumbnail) as NetworkImageView
+        val title = convertView.findViewById<View>(R.id.movieName) as TextView
+        val type = convertView.findViewById<View>(R.id.movieType) as TextView
+        val year = convertView.findViewById<View>(R.id.movieYear) as TextView
 
         // getting movie data for the row
-        MovieObject m = movieList.get(position);
+        val (title1, year1, _, type1, image) = movieList[position]
 
         // thumbnail image
-        thumbNail.setImageUrl(m.getImage(), imageLoader);
+        thumbNail.setImageUrl(image, imageLoader)
 
         // title
-        title.setText(m.getTitle());
+        title.text = title1
 
 
         // genre
-
-        type.setText(m.getType());
+        type.text = type1
 
         // release year
-        year.setText(m.getYear());
-
-        return convertView;
-
-
-
+        year.text = year1
+        return convertView
     }
 }
