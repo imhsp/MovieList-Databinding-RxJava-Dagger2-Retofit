@@ -14,7 +14,6 @@ import com.android.volley.VolleyError
 import com.android.volley.toolbox.JsonObjectRequest
 import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
-import com.himansh.movielist.data.rest.AppController
 import org.json.JSONArray
 import org.json.JSONException
 import java.util.*
@@ -65,7 +64,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
             showError(error)
             hidePDialog()
         }
-        AppController.instance.addToRequestQueue(jsonObjectRequest)
+       // AppController.instance.addToRequestQueue(jsonObjectRequest)
     }
 
     private fun showError(error: VolleyError) {
@@ -77,7 +76,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
-        searchMovie(query)
+        //searchMovie(query)
         return true
     }
 

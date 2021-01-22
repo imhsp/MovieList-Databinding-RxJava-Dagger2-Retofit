@@ -7,16 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
-import com.android.volley.toolbox.ImageLoader
 import com.android.volley.toolbox.NetworkImageView
 import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
-import com.himansh.movielist.data.rest.AppController
 import java.util.*
 
 class CustomAdapter(private val activity: Activity, var movieList: ArrayList<MovieObject>) : BaseAdapter() {
     private var inflater: LayoutInflater? = null
-    var imageLoader: ImageLoader? = AppController.getInstance().getImageLoader()
+    //var imageLoader: ImageLoader? = AppController.getInstance().getImageLoader()
     override fun getCount(): Int {
         return movieList.size
     }
@@ -34,7 +32,7 @@ class CustomAdapter(private val activity: Activity, var movieList: ArrayList<Mov
         if (inflater == null) inflater = activity
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         if (convertView == null) convertView = inflater!!.inflate(R.layout.custom_list_item, null)
-        if (imageLoader == null) imageLoader = AppController.getInstance().getImageLoader()
+        //if (imageLoader == null) imageLoader = AppController.getInstance().getImageLoader()
         val thumbNail = convertView
                 .findViewById<View>(R.id.thumbnail) as NetworkImageView
         val title = convertView.findViewById<View>(R.id.movieName) as TextView
@@ -45,7 +43,7 @@ class CustomAdapter(private val activity: Activity, var movieList: ArrayList<Mov
         val (title1, year1, _, type1, image) = movieList[position]
 
         // thumbnail image
-        thumbNail.setImageUrl(image, imageLoader)
+        //thumbNail.setImageUrl(image, imageLoader)
 
         // title
         title.text = title1

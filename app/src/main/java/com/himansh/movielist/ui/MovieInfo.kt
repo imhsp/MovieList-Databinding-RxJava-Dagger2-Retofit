@@ -2,18 +2,12 @@ package com.himansh.movielist.ui
 
 import android.app.ProgressDialog
 import android.os.Bundle
-import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
 import com.android.volley.VolleyError
-import com.android.volley.toolbox.ImageLoader
-import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.NetworkImageView
 import com.himansh.movielist.R
-import com.himansh.movielist.data.rest.AppController
-import org.json.JSONException
 
 class MovieInfo : AppCompatActivity() {
     var Title: TextView? = null
@@ -27,7 +21,7 @@ class MovieInfo : AppCompatActivity() {
     var Poster: NetworkImageView? = null
     private var pDialog: ProgressDialog? = null
     private var url = "http://www.omdbapi.com/?i=tt0099785&apikey=94a221d"
-    var imageLoader: ImageLoader? = AppController.getInstance().getImageLoader()
+    //var imageLoader: ImageLoader? = AppController.getInstance().getImageLoader()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_info)
@@ -44,7 +38,7 @@ class MovieInfo : AppCompatActivity() {
         pDialog = ProgressDialog(this)
         pDialog!!.setMessage("Loading...")
         pDialog!!.show()
-        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
+       /* val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
             hidePDialog()
             try {
                 Title.setText(response.getString("Title"))
@@ -67,8 +61,8 @@ class MovieInfo : AppCompatActivity() {
         }) { error ->
             showError(error)
             hidePDialog()
-        }
-        AppController.getInstance().addToRequestQueue(jsonObjectRequest)
+        }*/
+        //AppController.getInstance().addToRequestQueue(jsonObjectRequest)
     }
 
     private fun showError(error: VolleyError) {
