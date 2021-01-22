@@ -3,41 +3,51 @@ package com.himansh.movielist.ui
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ListView
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.Request
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.JsonObjectRequest
 import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
-import org.json.JSONArray
-import org.json.JSONException
-import java.util.*
+import com.himansh.movielist.data.model.SearchObject
+import com.himansh.movielist.data.rest.RepoService
+import com.himansh.movielist.util.RetrofitClientInstance
+import retrofit2.Call
+import retrofit2.Callback
 
 class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
+
+    companion object{
+        private val API_KEY = "94a221d"
+    }
     private var mSearchView: SearchView? = null
     private var pDialog: ProgressDialog? = null
-    private val movieList = ArrayList<MovieObject>()
+    private var movieList = listOf<MovieObject>()
     private var listView: ListView? = null
     private var adapter: CustomAdapter? = null
+
+    private lateinit var repoService: RepoService
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        repoService = RetrofitClientInstance.retrofitInstance.create(RepoService::class.java)
+
+        listView = findViewById<View>(R.id.movie_list) as ListView
+        adapter = CustomAdapter(this, movieList)
+        listView!!.adapter = adapter
+        listView!!.onItemClickListener = OnItemClickListener { _, _, position, _ -> launchMovieInfo(movieList[position].imdbID) }
+        listView!!.isTextFilterEnabled = true
+
         mSearchView = findViewById<View>(R.id.movie_search) as SearchView
         mSearchView!!.isIconifiedByDefault = false
         mSearchView!!.setOnQueryTextListener(this)
         mSearchView!!.isSubmitButtonEnabled = true
         mSearchView!!.queryHint = "Search Movie Here"
         mSearchView!!.setQuery("Home", true)
-        listView = findViewById<View>(R.id.movie_list) as ListView
-        adapter = CustomAdapter(this, movieList)
-        listView!!.adapter = adapter
-        listView!!.onItemClickListener = OnItemClickListener { _, _, position, _ -> launchMovieInfo(movieList[position].imdb) }
-        listView!!.isTextFilterEnabled = true
     }
 
     private fun searchMovie(query: String) {
@@ -45,29 +55,26 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         pDialog!!.setMessage("Loading...")
         pDialog!!.show()
         val url = "http://www.omdbapi.com/?s=$query&apikey=94a221d"
-        movieList.clear()
-        val jsonObjectRequest = JsonObjectRequest(Request.Method.GET, url, null, { response ->
-            hidePDialog()
-            val resultArray: JSONArray?
-            try {
-                resultArray = response.getJSONArray("Search")
-                for (j in 0 until resultArray.length()) {
-                    val obj = resultArray.getJSONObject(j)
-                    val movie = MovieObject(obj.getString("Title"), obj.getString("Year"), obj.getString("imdbID"), obj.getString("Type"), obj.getString("Poster"))
-                    movieList.add(movie)
-                }
-            } catch (e: JSONException) {
-                e.printStackTrace()
+
+        val searchMovieCall:Call<SearchObject> = repoService.getMoviesList(query, API_KEY)
+        searchMovieCall.enqueue(object : Callback<SearchObject?> {
+            override fun onResponse(call: Call<SearchObject?>?, response: retrofit2.Response<SearchObject?>) {
+                hidePDialog()
+                Log.d("TAG", response.code().toString() + "")
+                val resource: SearchObject = response.body()!!
+                movieList = resource.Search
+                adapter!!.notifyDataSetChanged()
             }
-            adapter!!.notifyDataSetChanged()
-        }) { error ->
-            showError(error)
-            hidePDialog()
-        }
-       // AppController.instance.addToRequestQueue(jsonObjectRequest)
+
+            override fun onFailure(call: Call<SearchObject?>, t: Throwable) {
+                call.cancel()
+                showError(t.message!!)
+                hidePDialog()
+            }
+        })
     }
 
-    private fun showError(error: VolleyError) {
+    private fun showError(error: String) {
         Toast.makeText(this, "I'll handle this Error if you hire me!\n\n$error", Toast.LENGTH_LONG).show()
     }
 
@@ -76,7 +83,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
-        //searchMovie(query)
+        searchMovie(query)
         return true
     }
 

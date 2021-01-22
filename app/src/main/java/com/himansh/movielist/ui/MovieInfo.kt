@@ -5,8 +5,6 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.NetworkImageView
 import com.himansh.movielist.R
 
 class MovieInfo : AppCompatActivity() {
@@ -18,14 +16,14 @@ class MovieInfo : AppCompatActivity() {
     var Writer: TextView? = null
     var Actor: TextView? = null
     var Plot: TextView? = null
-    var Poster: NetworkImageView? = null
+    //var Poster: NetworkImageView? = null
     private var pDialog: ProgressDialog? = null
     private var url = "http://www.omdbapi.com/?i=tt0099785&apikey=94a221d"
     //var imageLoader: ImageLoader? = AppController.getInstance().getImageLoader()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_info)
-        Poster = findViewById(R.id.imageViewPoster)
+        //Poster = findViewById(R.id.imageViewPoster)
         url = "http://www.omdbapi.com/?i=" + intent.getStringExtra("imdbID") + "&apikey=94a221d"
         Title = findViewById(R.id.textViewTitle)
         Released = findViewById(R.id.textViewReleased)
@@ -65,9 +63,9 @@ class MovieInfo : AppCompatActivity() {
         //AppController.getInstance().addToRequestQueue(jsonObjectRequest)
     }
 
-    private fun showError(error: VolleyError) {
+    /*private fun showError(error: VolleyError) {
         Toast.makeText(this, "I'll handle this Error if you hire me!\n\n$error", Toast.LENGTH_LONG).show()
-    }
+    }*/
 
     public override fun onDestroy() {
         super.onDestroy()
