@@ -4,6 +4,7 @@ Each list item will display the movie’s name, some basic information and a sma
 Clicking on any list item will open a new screen with detailed information about the movie.
 
 Demonstrates: (if some of points below are not implemented yet, then work is in progress and will be updated soon.)
+- Kotlin
 - Data binding
 - Recycler view
 - Retrofit
