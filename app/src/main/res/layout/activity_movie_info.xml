@@ -1,91 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.MovieInfo">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
 
-    <LinearLayout
+        <variable
+            name="movieObject"
+            type="com.himansh.movielist.data.model.MovieObject" />
+    </data>
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="5dp">
-
-        <TextView
-            android:id="@+id/textViewTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="TextView"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textViewReleased"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="TextView"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/textViewIMDBRatings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="TextView"
-            android:textSize="18sp" />
+        tools:context=".ui.MovieInfo">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="left"
+            android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical"
             android:padding="5dp">
 
+            <ImageView
+                android:id="@+id/moviePoster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:padding="5dp" />
+
             <TextView
-                android:id="@+id/textViewGenre"
+                android:id="@+id/textViewTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="TextView"
+                android:text="@{movieObject.title}"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textViewReleased"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@{movieObject.year}"
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/textViewDirector"
+                android:id="@+id/textViewIMDBRatings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:text="TextView"
+                android:text="@{movieObject.imdbRating}"
                 android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/textViewWriter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="TextView"
-                android:textSize="18sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="start"
+                android:orientation="vertical"
+                android:padding="5dp">
 
-            <TextView
-                android:id="@+id/textViewActors"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="TextView"
-                android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/textViewGenre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@{movieObject.genre}"
+                    android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/textViewPlot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="TextView"
-                android:textSize="18sp" />
+                <TextView
+                    android:id="@+id/textViewDirector"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@{movieObject.director}"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/textViewWriter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@{movieObject.writer}"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/textViewActors"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@{movieObject.actors}"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/textViewPlot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="@{movieObject.plot}"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
         </LinearLayout>
-
-    </LinearLayout>
-</ScrollView>
+    </ScrollView>
+</layout>
