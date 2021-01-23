@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private lateinit var listView: RecyclerView
     private lateinit var adapter: CustomAdapter
 
-    private var movieList = listOf<MovieObject>()
+    private var movieList = arrayListOf<MovieObject>()
 
     private lateinit var repoService: RepoService
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,9 +48,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         }
 
         listView.adapter = adapter
-        val linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        listView.layoutManager = linearLayoutManager
+        listView.layoutManager = LinearLayoutManager(this)
 
         mSearchView = findViewById<View>(R.id.movie_search) as SearchView
         mSearchView.isIconifiedByDefault = false
@@ -66,10 +64,13 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         val searchMovieCall: Call<SearchObject> = repoService.getMoviesList(query, API_KEY)
         searchMovieCall.enqueue(object : Callback<SearchObject?> {
             override fun onResponse(call: Call<SearchObject?>?, response: retrofit2.Response<SearchObject?>) {
+                movieList.clear()
                 ProgressDialog.dismiss()
                 Log.d("TAG", response.code().toString() + "")
                 val resource: SearchObject = response.body()!!
-                movieList = resource.Search
+                if (resource.totalResults > 0)
+                    movieList.addAll(resource.Search)
+
                 adapter.notifyDataSetChanged()
             }
 

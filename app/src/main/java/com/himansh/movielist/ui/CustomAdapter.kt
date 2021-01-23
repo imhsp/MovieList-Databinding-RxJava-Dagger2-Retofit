@@ -10,7 +10,7 @@ import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
 
 
-class CustomAdapter(private val context: Context, private var movieList: List<MovieObject>, var onItemClick: (position: Int) -> Unit) : RecyclerView.Adapter<CustomAdapter.MovieObjectViewHolder>() {
+class CustomAdapter(private val context: Context, private var movieList: ArrayList<MovieObject>, var onItemClick: (position: Int) -> Unit) : RecyclerView.Adapter<CustomAdapter.MovieObjectViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieObjectViewHolder {
         val inflatedView = LayoutInflater.from(context).inflate(R.layout.custom_list_item, parent, false)
