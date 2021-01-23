@@ -7,6 +7,7 @@ Demonstrates: (if some of points below are not implemented yet, then work is in 
 - Data binding
 - Recycler view
 - Retrofit
+- MVVM
 - Clean Architecture
 - RxJAVA
 - Test Driven Development
