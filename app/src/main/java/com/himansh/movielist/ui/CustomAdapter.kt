@@ -1,49 +1,43 @@
 package com.himansh.movielist.ui
 
-import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
 
-class CustomAdapter(private val activity: Activity, var movieList: List<MovieObject>) : BaseAdapter() {
-    private var inflater: LayoutInflater? = null
-    //var imageLoader: ImageLoader? = AppController.getInstance().getImageLoader()
-    override fun getCount(): Int {
+
+class CustomAdapter(private val context: Context, private var movieList: List<MovieObject>, var onItemClick: (position: Int) -> Unit) : RecyclerView.Adapter<CustomAdapter.MovieObjectViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieObjectViewHolder {
+        val inflatedView = LayoutInflater.from(context).inflate(R.layout.custom_list_item, parent, false)
+        return MovieObjectViewHolder(inflatedView, onItemClick)
+    }
+
+    override fun onBindViewHolder(holder: MovieObjectViewHolder, position: Int) {
+        holder.bind(movieList[position], position)
+    }
+
+    override fun getItemCount(): Int {
         return movieList.size
     }
 
-    override fun getItem(position: Int): Any {
-        return movieList[position]
-    }
+    class MovieObjectViewHolder(itemView: View, var onItemClick: (position: Int) -> Unit) : RecyclerView.ViewHolder(itemView) {
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
+        private val movieTitle: TextView = itemView.findViewById(R.id.movieName)
+        private val movieType: TextView = itemView.findViewById(R.id.movieType)
+        private val movieYear: TextView = itemView.findViewById(R.id.movieYear)
 
-    override fun getView(position: Int, convertView: View, parent: ViewGroup): View {
-        if (inflater == null) inflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        //if (imageLoader == null) imageLoader = AppController.getInstance().getImageLoader()
+        fun bind(movieObject: MovieObject, position: Int) {
+            movieTitle.text = movieObject.Title
+            movieType.text = movieObject.Type
+            movieYear.text = movieObject.Year
 
-        val title = convertView.findViewById<View>(R.id.movieName) as TextView
-        val type = convertView.findViewById<View>(R.id.movieType) as TextView
-        val year = convertView.findViewById<View>(R.id.movieYear) as TextView
+            itemView.setOnClickListener { onItemClick(position) }
+        }
 
-        // getting movie data for the row
-        val (title1, year1, _, type1, image) = movieList[position]
-
-        // title
-        title.text = title1
-
-        // genre
-        type.text = type1
-
-        // release year
-        year.text = year1
-        return convertView
     }
 }
