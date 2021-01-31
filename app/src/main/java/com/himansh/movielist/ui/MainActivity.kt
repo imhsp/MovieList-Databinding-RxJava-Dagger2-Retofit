@@ -3,17 +3,19 @@ package com.himansh.movielist.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
 import com.himansh.movielist.data.model.SearchObject
-import com.himansh.movielist.data.rest.RepoService
-import com.himansh.movielist.util.RetrofitClientInstance
+import com.himansh.movielist.data.remote.RepoService
+import com.himansh.movielist.data.remote.RetrofitClientInstance
+import com.himansh.movielist.databinding.ActivityMainBinding
+import com.himansh.movielist.ui.adapters.CustomAdapter
+import com.himansh.movielist.util.ProgressDialog
 import retrofit2.Call
 import retrofit2.Callback
 
@@ -23,9 +25,8 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         private const val API_KEY = "94a221d"
     }
 
-    private lateinit var mSearchView: SearchView
-    private lateinit var listView: RecyclerView
     private lateinit var adapter: CustomAdapter
+    private lateinit var binding: ActivityMainBinding
 
     private var movieList = arrayListOf<MovieObject>()
 
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         repoService = RetrofitClientInstance.retrofitInstance.create(RepoService::class.java)
         initViews()
     }
@@ -41,21 +42,18 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private fun initViews() {
         ProgressDialog.initialise(this)
 
-        listView = findViewById<View>(R.id.movie_list) as RecyclerView
-
         adapter = CustomAdapter(this, movieList) {
             launchMovieInfo(movieList[it].imdbID)
         }
 
-        listView.adapter = adapter
-        listView.layoutManager = LinearLayoutManager(this)
+        binding.movieList.adapter = adapter
+        binding.movieList.layoutManager = LinearLayoutManager(this)
 
-        mSearchView = findViewById<View>(R.id.movie_search) as SearchView
-        mSearchView.isIconifiedByDefault = false
-        mSearchView.setOnQueryTextListener(this)
-        mSearchView.isSubmitButtonEnabled = true
-        mSearchView.queryHint = "Search Movie Here"
-        mSearchView.setQuery("Home", true)
+        binding.movieSearch.isIconifiedByDefault = false
+        binding.movieSearch.setOnQueryTextListener(this)
+        binding.movieSearch.isSubmitButtonEnabled = true
+        binding.movieSearch.queryHint = "Search Movie Here"
+        binding.movieSearch.setQuery("Home", true)
     }
 
     private fun searchMovie(query: String) {

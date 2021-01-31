@@ -8,9 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
-import com.himansh.movielist.data.rest.RepoService
+import com.himansh.movielist.data.remote.RepoService
 import com.himansh.movielist.databinding.ActivityMovieInfoBinding
-import com.himansh.movielist.util.RetrofitClientInstance
+import com.himansh.movielist.util.ProgressDialog
+import com.himansh.movielist.data.remote.RetrofitClientInstance
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback

@@ -1,4 +1,4 @@
-package com.himansh.movielist.data.rest
+package com.himansh.movielist.data.remote
 
 import com.himansh.movielist.data.model.MovieObject
 import com.himansh.movielist.data.model.SearchObject

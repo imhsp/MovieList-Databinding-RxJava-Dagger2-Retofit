@@ -1,4 +1,4 @@
-package com.himansh.movielist.ui
+package com.himansh.movielist.util
 
 import android.app.ProgressDialog
 import android.content.Context

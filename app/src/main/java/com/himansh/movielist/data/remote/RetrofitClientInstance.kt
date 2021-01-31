@@ -1,4 +1,4 @@
-package com.himansh.movielist.util
+package com.himansh.movielist.data.remote
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

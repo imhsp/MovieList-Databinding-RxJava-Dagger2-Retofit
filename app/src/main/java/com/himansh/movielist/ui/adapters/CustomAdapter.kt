@@ -1,22 +1,21 @@
-package com.himansh.movielist.ui
+package com.himansh.movielist.ui.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
+import com.himansh.movielist.databinding.CustomListItemBinding
 import com.squareup.picasso.Picasso
 
 
 class CustomAdapter(private val context: Context, private var movieList: ArrayList<MovieObject>, var onItemClick: (position: Int) -> Unit) : RecyclerView.Adapter<CustomAdapter.MovieObjectViewHolder>() {
 
+    private lateinit var binding: CustomListItemBinding
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieObjectViewHolder {
-        val inflatedView = LayoutInflater.from(context).inflate(R.layout.custom_list_item, parent, false)
-        return MovieObjectViewHolder(inflatedView, onItemClick)
+        binding = CustomListItemBinding.inflate(LayoutInflater.from(context), parent, false)
+        return MovieObjectViewHolder(binding, onItemClick)
     }
 
     override fun onBindViewHolder(holder: MovieObjectViewHolder, position: Int) {
@@ -27,23 +26,13 @@ class CustomAdapter(private val context: Context, private var movieList: ArrayLi
         return movieList.size
     }
 
-    class MovieObjectViewHolder(itemView: View, var onItemClick: (position: Int) -> Unit) : RecyclerView.ViewHolder(itemView) {
-
-        private val moviePoster: ImageView = itemView.findViewById(R.id.moviePoster)
-        private val movieTitle: TextView = itemView.findViewById(R.id.movieName)
-        private val movieType: TextView = itemView.findViewById(R.id.movieType)
-        private val movieYear: TextView = itemView.findViewById(R.id.movieYear)
+    class MovieObjectViewHolder(private val binding: CustomListItemBinding, var onItemClick: (position: Int) -> Unit) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(movieObject: MovieObject, position: Int) {
-
             Picasso.get()
                     .load(movieObject.Poster)
-                    .into(moviePoster)
-
-            movieTitle.text = movieObject.Title
-            movieType.text = movieObject.Type
-            movieYear.text = movieObject.Year
-
+                    .into(binding.moviePoster)
+            binding.movie = movieObject
             itemView.setOnClickListener { onItemClick(position) }
         }
 
