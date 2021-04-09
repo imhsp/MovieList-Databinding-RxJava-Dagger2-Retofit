@@ -9,7 +9,7 @@ import com.himansh.movielist.databinding.CustomListItemBinding
 import com.squareup.picasso.Picasso
 
 
-class CustomAdapter(private val context: Context, private var movieList: ArrayList<MovieObject>, var onItemClick: (position: Int) -> Unit) : RecyclerView.Adapter<CustomAdapter.MovieObjectViewHolder>() {
+class MovieListAdapter(private val context: Context, private var movieList: ArrayList<MovieObject>, var onItemClick: (position: Int) -> Unit) : RecyclerView.Adapter<MovieListAdapter.MovieObjectViewHolder>() {
 
     private lateinit var binding: CustomListItemBinding
 

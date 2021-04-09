@@ -14,7 +14,7 @@ import com.himansh.movielist.data.model.SearchObject
 import com.himansh.movielist.data.remote.RepoService
 import com.himansh.movielist.data.remote.RetrofitClientInstance
 import com.himansh.movielist.databinding.ActivityMainBinding
-import com.himansh.movielist.ui.adapters.CustomAdapter
+import com.himansh.movielist.ui.adapters.MovieListAdapter
 import com.himansh.movielist.util.ProgressDialog
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         private const val API_KEY = "94a221d"
     }
 
-    private lateinit var adapter: CustomAdapter
+    private lateinit var adapter: MovieListAdapter
     private lateinit var binding: ActivityMainBinding
 
     private var movieList = arrayListOf<MovieObject>()
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private fun initViews() {
         ProgressDialog.initialise(this)
 
-        adapter = CustomAdapter(this, movieList) {
+        adapter = MovieListAdapter(this, movieList) {
             launchMovieInfo(movieList[it].imdbID)
         }
 
