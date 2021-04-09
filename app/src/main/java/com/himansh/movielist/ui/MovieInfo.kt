@@ -2,19 +2,19 @@ package com.himansh.movielist.ui
 
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
 import com.himansh.movielist.data.remote.RepoService
+import com.himansh.movielist.data.remote.RetrofitClientInstance
 import com.himansh.movielist.databinding.ActivityMovieInfoBinding
 import com.himansh.movielist.util.ProgressDialog
-import com.himansh.movielist.data.remote.RetrofitClientInstance
 import com.squareup.picasso.Picasso
-import retrofit2.Call
-import retrofit2.Callback
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class MovieInfo : AppCompatActivity() {
 
@@ -45,25 +45,26 @@ class MovieInfo : AppCompatActivity() {
 
         ProgressDialog.show()
 
-        val searchMovieCall: Call<MovieObject> = repoService.getMovieDetail(movieID, API_KEY)
-        searchMovieCall.enqueue(object : Callback<MovieObject?> {
-            override fun onResponse(call: Call<MovieObject?>?, response: retrofit2.Response<MovieObject?>) {
-                ProgressDialog.dismiss()
-                Log.d("TAG", response.code().toString() + "")
-                val resource: MovieObject = response.body()!!
-                binding.movieObject = resource
+        val cryptoObservable: Observable<MovieObject> = repoService.getMovieDetail(movieID, API_KEY)
+        cryptoObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResults, this::handleError)
+    }
 
-                Picasso.get()
-                        .load(resource.Poster)
-                        .into(binding.moviePoster)
-            }
+    private fun handleResults(marketList: MovieObject?) {
+        ProgressDialog.dismiss()
+        binding.movieObject = marketList
 
-            override fun onFailure(call: Call<MovieObject?>, t: Throwable) {
-                call.cancel()
-                showError(t.message!!)
-                ProgressDialog.dismiss()
-            }
-        })
+        Picasso.get()
+                .load(marketList?.Poster)
+                .into(binding.moviePoster)
+    }
+
+    private fun handleError(t: Throwable) {
+        Toast.makeText(this, "ERROR IN FETCHING API RESPONSE. Try again",
+                Toast.LENGTH_LONG).show()
+        showError(t.message!!)
+        ProgressDialog.dismiss()
     }
 
     private fun showError(error: String) {

@@ -2,7 +2,6 @@ package com.himansh.movielist.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,8 +15,10 @@ import com.himansh.movielist.data.remote.RetrofitClientInstance
 import com.himansh.movielist.databinding.ActivityMainBinding
 import com.himansh.movielist.ui.adapters.MovieListAdapter
 import com.himansh.movielist.util.ProgressDialog
-import retrofit2.Call
-import retrofit2.Callback
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+
 
 class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
@@ -59,25 +60,29 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private fun searchMovie(query: String) {
         ProgressDialog.show()
 
-        val searchMovieCall: Call<SearchObject> = repoService.getMoviesList(query, API_KEY)
-        searchMovieCall.enqueue(object : Callback<SearchObject?> {
-            override fun onResponse(call: Call<SearchObject?>?, response: retrofit2.Response<SearchObject?>) {
-                movieList.clear()
-                ProgressDialog.dismiss()
-                Log.d("TAG", response.code().toString() + "")
-                val resource: SearchObject = response.body()!!
-                if (resource.totalResults > 0)
-                    movieList.addAll(resource.Search)
+        val cryptoObservable: Observable<SearchObject> = repoService.getMoviesList(query, API_KEY)
+        cryptoObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { result -> result.Search }
+                .subscribe(this::handleResults, this::handleError)
+    }
 
-                adapter.notifyDataSetChanged()
-            }
+    private fun handleResults(marketList: List<MovieObject>?) {
+        if (marketList != null && marketList.isNotEmpty()) {
+            movieList.clear()
+            ProgressDialog.dismiss()
+            movieList.addAll(marketList)
+            adapter.notifyDataSetChanged()
+        } else {
+            Toast.makeText(this, "NO RESULTS FOUND",
+                    Toast.LENGTH_LONG).show()
+        }
+    }
 
-            override fun onFailure(call: Call<SearchObject?>, t: Throwable) {
-                call.cancel()
-                showError(t.message!!)
-                ProgressDialog.dismiss()
-            }
-        })
+    private fun handleError(t: Throwable) {
+        Toast.makeText(this, "ERROR IN FETCHING API RESPONSE. Try again",
+                Toast.LENGTH_LONG).show()
+        ProgressDialog.dismiss()
     }
 
     private fun showError(error: String) {
