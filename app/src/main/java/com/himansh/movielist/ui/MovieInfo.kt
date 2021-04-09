@@ -6,13 +6,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.himansh.movielist.R
-import com.himansh.movielist.data.model.MovieObject
 import com.himansh.movielist.data.remote.RepoService
 import com.himansh.movielist.data.remote.RetrofitClientInstance
 import com.himansh.movielist.databinding.ActivityMovieInfoBinding
+import com.himansh.movielist.domain.GetMovieDetailsUseCase
+import com.himansh.movielist.domain.mappers.ResultMap
 import com.himansh.movielist.util.ProgressDialog
 import com.squareup.picasso.Picasso
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -45,18 +45,20 @@ class MovieInfo : AppCompatActivity() {
 
         ProgressDialog.show()
 
-        val cryptoObservable: Observable<MovieObject> = repoService.getMovieDetail(movieID, API_KEY)
-        cryptoObservable.subscribeOn(Schedulers.io())
+        val getMovieDetailsUseCase = GetMovieDetailsUseCase(repoService)
+        val movieListObservable = getMovieDetailsUseCase.execute(movieID, API_KEY)
+        movieListObservable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::handleResults, this::handleError)
     }
 
-    private fun handleResults(marketList: MovieObject?) {
+    private fun handleResults(result: ResultMap) {
         ProgressDialog.dismiss()
-        binding.movieObject = marketList
+        val successResult = (result as ResultMap.Success).movies[0]
+        binding.movieObject = successResult
 
         Picasso.get()
-                .load(marketList?.Poster)
+                .load(binding.movieObject?.Poster)
                 .into(binding.moviePoster)
     }
 

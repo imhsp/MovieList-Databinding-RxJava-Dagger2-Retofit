@@ -9,13 +9,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
-import com.himansh.movielist.data.model.SearchObject
 import com.himansh.movielist.data.remote.RepoService
 import com.himansh.movielist.data.remote.RetrofitClientInstance
 import com.himansh.movielist.databinding.ActivityMainBinding
+import com.himansh.movielist.domain.GetMovieListUseCase
+import com.himansh.movielist.domain.mappers.ResultMap
 import com.himansh.movielist.ui.adapters.MovieListAdapter
 import com.himansh.movielist.util.ProgressDialog
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
@@ -59,19 +59,19 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     private fun searchMovie(query: String) {
         ProgressDialog.show()
-
-        val cryptoObservable: Observable<SearchObject> = repoService.getMoviesList(query, API_KEY)
-        cryptoObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map { result -> result.Search }
-                .subscribe(this::handleResults, this::handleError)
+        val getMovieListUseCase = GetMovieListUseCase(repoService)
+        val movieListObservable = getMovieListUseCase.execute(query, API_KEY)
+        movieListObservable.subscribeOn(Schedulers.io())
+               .observeOn(AndroidSchedulers.mainThread())
+               .subscribe(this::handleResults, this::handleError)
     }
 
-    private fun handleResults(marketList: List<MovieObject>?) {
-        if (marketList != null && marketList.isNotEmpty()) {
+    private fun handleResults(result: ResultMap) {
+        ProgressDialog.dismiss()
+        val successResult = result as ResultMap.Success
+        if (successResult.movies.isNotEmpty()) {
             movieList.clear()
-            ProgressDialog.dismiss()
-            movieList.addAll(marketList)
+            movieList.addAll(successResult.movies)
             adapter.notifyDataSetChanged()
         } else {
             Toast.makeText(this, "NO RESULTS FOUND",
@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private fun handleError(t: Throwable) {
         Toast.makeText(this, "ERROR IN FETCHING API RESPONSE. Try again",
                 Toast.LENGTH_LONG).show()
+        showError(t.message!!)
         ProgressDialog.dismiss()
     }
 
