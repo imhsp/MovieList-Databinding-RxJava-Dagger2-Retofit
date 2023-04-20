@@ -7,8 +7,8 @@ import javax.inject.Inject
 
 class GetMovieListUseCase  @Inject constructor(private val repoService: RepoService) {
 
-    fun execute(searchQuery: String, apiKey: String): Observable<ResultMap> {
-        return repoService.getMoviesList(searchQuery, apiKey)
+    fun execute(searchQuery: String): Observable<ResultMap> {
+        return repoService.getMoviesList(searchQuery)
                 .map { ResultMap.Success(it.Search) as ResultMap }
                 .onErrorReturn { ResultMap.Failure(it) }
     }

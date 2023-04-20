@@ -6,8 +6,8 @@ import io.reactivex.Observable
 import javax.inject.Inject
 
 class GetMovieDetailsUseCase @Inject constructor(private val repoService: RepoService) {
-    fun execute(movieId: String, apiKey: String): Observable<ResultMap> {
-        return repoService.getMovieDetail(movieId, apiKey)
+    fun execute(movieId: String): Observable<ResultMap> {
+        return repoService.getMovieDetail(movieId)
                 .map { ResultMap.Success(listOf(it)) as ResultMap }
                 .onErrorReturn { ResultMap.Failure(it) }
     }

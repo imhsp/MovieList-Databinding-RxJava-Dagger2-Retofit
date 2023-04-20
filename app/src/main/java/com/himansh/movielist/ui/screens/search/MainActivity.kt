@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private fun searchMovie(query: String) {
         ProgressDialog.show()
         val getMovieListUseCase = GetMovieListUseCase(repoService)
-        val movieListObservable = getMovieListUseCase.execute(query, API_KEY)
+        val movieListObservable = getMovieListUseCase.execute(query)
         movieListObservable.subscribeOn(Schedulers.io())
                .observeOn(AndroidSchedulers.mainThread())
                .subscribe(this::handleResults, this::handleError)
