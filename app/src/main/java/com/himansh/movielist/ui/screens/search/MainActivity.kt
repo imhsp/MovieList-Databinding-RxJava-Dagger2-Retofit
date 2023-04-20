@@ -1,4 +1,4 @@
-package com.himansh.movielist.ui
+package com.himansh.movielist.ui.screens.search
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,6 +15,7 @@ import com.himansh.movielist.databinding.ActivityMainBinding
 import com.himansh.movielist.domain.GetMovieListUseCase
 import com.himansh.movielist.domain.mappers.ResultMap
 import com.himansh.movielist.ui.adapters.MovieListAdapter
+import com.himansh.movielist.ui.screens.detail.MovieInfo
 import com.himansh.movielist.util.ProgressDialog
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

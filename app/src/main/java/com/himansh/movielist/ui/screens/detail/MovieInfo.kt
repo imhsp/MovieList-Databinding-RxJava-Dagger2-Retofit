@@ -1,4 +1,4 @@
-package com.himansh.movielist.ui
+package com.himansh.movielist.ui.screens.detail
 
 
 import android.os.Bundle
