@@ -1,25 +1,23 @@
 package com.himansh.movielist.ui.screens.search
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.himansh.movielist.data.remote.RepoService
-import com.himansh.movielist.data.remote.RetrofitClientInstance
 import com.himansh.movielist.domain.GetMovieListUseCase
 import com.himansh.movielist.domain.mappers.ResultMap
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class SearchViewModel : ViewModel() {
-    private val repoService: RepoService =
-        RetrofitClientInstance.retrofitInstance.create(RepoService::class.java)
+class SearchViewModel (private val getMovieListUseCase: GetMovieListUseCase) : ViewModel() {
 
     private val _searchData = MutableLiveData<ResultMap>()
-    val searchData: MutableLiveData<ResultMap>
+    val searchData: LiveData<ResultMap>
         get() = _searchData
 
     fun search(query: String) {
         _searchData.value = ResultMap.Loading
-        val getMovieListUseCase = GetMovieListUseCase(repoService)
         val movieListObservable = getMovieListUseCase.execute(query)
         val x = movieListObservable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

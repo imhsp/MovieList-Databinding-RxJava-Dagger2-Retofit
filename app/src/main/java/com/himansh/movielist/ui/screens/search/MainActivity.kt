@@ -13,13 +13,18 @@ import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
 import com.himansh.movielist.databinding.ActivityMainBinding
 import com.himansh.movielist.domain.mappers.ResultMap
+import com.himansh.movielist.ui.MovieApplication
 import com.himansh.movielist.ui.adapters.MovieListAdapter
 import com.himansh.movielist.ui.screens.detail.MovieInfo
+import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
-    private val viewModel: SearchViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: SearchViewModelFactory
+
+    private val viewModel: SearchViewModel by viewModels { viewModelFactory }
     private lateinit var adapter: MovieListAdapter
     private lateinit var binding: ActivityMainBinding
 
@@ -27,6 +32,8 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        (application as MovieApplication).applicationComponent.inject(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 

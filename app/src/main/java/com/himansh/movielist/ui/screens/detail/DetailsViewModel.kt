@@ -1,5 +1,6 @@
 package com.himansh.movielist.ui.screens.detail
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.himansh.movielist.data.remote.RepoService
@@ -15,7 +16,7 @@ class DetailsViewModel : ViewModel() {
         RetrofitClientInstance.retrofitInstance.create(RepoService::class.java)
 
     private val _movieData: MutableLiveData<ResultMap> = MutableLiveData()
-    val movieData: MutableLiveData<ResultMap>
+    val movieData: LiveData<ResultMap>
         get() = _movieData
 
     fun getMovieInfo(movieID: String) {
