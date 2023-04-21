@@ -11,17 +11,24 @@ import com.himansh.movielist.R
 import com.himansh.movielist.data.model.MovieObject
 import com.himansh.movielist.databinding.ActivityMovieInfoBinding
 import com.himansh.movielist.domain.mappers.ResultMap
+import com.himansh.movielist.ui.MovieApplication
 import com.squareup.picasso.Picasso
+import javax.inject.Inject
 
 class MovieInfo : AppCompatActivity() {
 
-    private val viewModel: DetailsViewModel by viewModels()
+    @Inject
+    lateinit var viewModelFactory: DetailsViewModelFactory
+
+    private val viewModel: DetailsViewModel by viewModels { viewModelFactory }
     private lateinit var binding: ActivityMovieInfoBinding
 
     private lateinit var movieID: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        (application as MovieApplication).applicationComponent.inject(this)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_movie_info)
         movieID = intent.getStringExtra("imdbID").toString()

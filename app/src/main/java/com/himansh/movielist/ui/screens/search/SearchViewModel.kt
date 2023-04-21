@@ -3,12 +3,10 @@ package com.himansh.movielist.ui.screens.search
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.himansh.movielist.data.remote.RepoService
 import com.himansh.movielist.domain.GetMovieListUseCase
 import com.himansh.movielist.domain.mappers.ResultMap
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import javax.inject.Inject
 
 class SearchViewModel (private val getMovieListUseCase: GetMovieListUseCase) : ViewModel() {
 
