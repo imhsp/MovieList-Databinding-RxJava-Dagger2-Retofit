@@ -11,8 +11,8 @@ Demonstrates: (if some of points below are not implemented yet, then work is in 
 - MVVM
 - Clean Architecture
 - RxJAVA
-- Test Driven Development
 - Dependency Injection (Dagger 2)
+- Test Driven Development
 
 The API endpoint
 
