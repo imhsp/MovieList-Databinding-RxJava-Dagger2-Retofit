@@ -33,7 +33,15 @@ class DetailsViewModel(private val getMovieDetailsUseCase: GetMovieDetailsUseCas
     }
 
     private fun handleResults(result: ResultMap) {
-        _movieData.value = result as ResultMap.Success
+        when (result) {
+            is ResultMap.Success -> {
+                _movieData.value = result
+            }
+
+            is ResultMap.Failure -> {
+                handleError(result.throwable)
+            }
+        }
     }
 
     private fun handleError(throwable: Throwable) {

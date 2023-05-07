@@ -1,5 +1,6 @@
 package com.himansh.movielist.ui.screens.search
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,7 +34,14 @@ class SearchViewModel(private val getMovieListUseCase: GetMovieListUseCase) : Vi
     }
 
     private fun handleResults(result: ResultMap) {
-        _searchData.value = result as ResultMap.Success
+        when(result){
+            is ResultMap.Success -> {
+                _searchData.value = result
+            }
+            is ResultMap.Failure -> {
+                handleError(result.throwable)
+            }
+        }
     }
 
     private fun handleError(t: Throwable) {

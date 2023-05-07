@@ -23,7 +23,8 @@ data class MovieObject(var Title: String,
                        var BoxOffice: String,
                        var Production: String,
                        var Website: String,
-                       var Response: String,
+                       var Response: Boolean,
+                       var Error: String,
                        var Type: String)
 
 data class Rating(val Source: String, val Value: String)

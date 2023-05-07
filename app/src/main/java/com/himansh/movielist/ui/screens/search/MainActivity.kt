@@ -64,6 +64,11 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
                     binding.loadingView.isVisible = false
                     binding.movieList.isVisible = false
                     binding.errorView.isVisible = true
+                    if (it.throwable.message.isNullOrEmpty()) {
+                        binding.errorMessage.text = getString(R.string.error_message)
+                    } else {
+                        binding.errorMessage.text = it.throwable.message
+                    }
                 }
             }
         }

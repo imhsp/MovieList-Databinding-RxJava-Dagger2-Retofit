@@ -43,7 +43,6 @@ class MovieInfo : AppCompatActivity() {
     private fun getMovieDetails() {
 
         viewModel.movieData.observe(this) {
-            Log.d("himanshu", "getMovieDetails: $it")
             when (it) {
                 is ResultMap.Loading -> {
                     binding.loadingView.isVisible = true
@@ -62,6 +61,11 @@ class MovieInfo : AppCompatActivity() {
                     binding.loadingView.isVisible = false
                     binding.dataView.isVisible = false
                     binding.errorView.isVisible = true
+                    if (it.throwable.message.isNullOrEmpty()) {
+                        binding.errorMessage.text = getString(R.string.error_message)
+                    } else {
+                        binding.errorMessage.text = it.throwable.message
+                    }
                 }
             }
         }

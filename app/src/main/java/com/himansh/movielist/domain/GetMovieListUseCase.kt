@@ -5,11 +5,17 @@ import com.himansh.movielist.domain.mappers.ResultMap
 import io.reactivex.Observable
 import javax.inject.Inject
 
-class GetMovieListUseCase  @Inject constructor(private val repoService: RepoService) {
+class GetMovieListUseCase @Inject constructor(private val repoService: RepoService) {
 
     fun execute(searchQuery: String): Observable<ResultMap> {
         return repoService.getMoviesList(searchQuery)
-                .map { ResultMap.Success(it.Search) as ResultMap }
-                .onErrorReturn { ResultMap.Failure(it) }
+            .map {
+                if (it.Response) {
+                    ResultMap.Success(it.Search)
+                } else {
+                    ResultMap.Failure(Exception(it.Error))
+                }
+            }
+            .onErrorReturn { ResultMap.Failure(it) }
     }
 }
