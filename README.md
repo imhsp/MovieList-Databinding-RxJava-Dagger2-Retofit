@@ -3,7 +3,7 @@ A simple Android mobile application written in Kotlin which searches and loads a
 Each list item will display the movie’s name, some basic information and a small poster thumbnail.
 Clicking on any list item will open a new screen with detailed information about the movie.
 
-Demonstrates: (if some of points below are not implemented yet, then work is in progress and will be updated soon.)
+Demonstrates:
 - Kotlin
 - Data binding
 - Recycler view
@@ -11,8 +11,8 @@ Demonstrates: (if some of points below are not implemented yet, then work is in 
 - MVVM
 - Clean Architecture
 - RxJAVA
-- Test Driven Development
 - Dependency Injection (Dagger 2)
+- Test Driven Development
 
 The API endpoint
 
