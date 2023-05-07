@@ -6,9 +6,12 @@ import androidx.lifecycle.ViewModel
 import com.himansh.movielist.domain.GetMovieDetailsUseCase
 import com.himansh.movielist.domain.mappers.ResultMap
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 class DetailsViewModel(private val getMovieDetailsUseCase: GetMovieDetailsUseCase) : ViewModel() {
+
+    private val disposables = CompositeDisposable()
 
     private val _movieData: MutableLiveData<ResultMap> = MutableLiveData()
     val movieData: LiveData<ResultMap>
@@ -17,9 +20,16 @@ class DetailsViewModel(private val getMovieDetailsUseCase: GetMovieDetailsUseCas
     fun getMovieInfo(movieID: String) {
         _movieData.value = ResultMap.Loading
         val movieListObservable = getMovieDetailsUseCase.execute(movieID)
-        val x = movieListObservable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(this::handleResults, this::handleError)
+        disposables.add(
+            movieListObservable.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::handleResults, this::handleError)
+        )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposables.clear()
     }
 
     private fun handleResults(result: ResultMap) {
